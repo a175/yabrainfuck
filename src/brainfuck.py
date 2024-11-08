@@ -205,6 +205,7 @@ class BrainFuckCompilier:
             self.code_table[self.get_code_for_a_token(s)]=c
         self.CODE_BO=target_brainfuckvm.CODE_BO
         self.CODE_BC=target_brainfuckvm.CODE_BC
+        self.default_takens=['.',',','[',']','+','-','<','>']
 
     def get_codelist_from_text(self, codetext):
         r = []
@@ -220,15 +221,21 @@ class BrainFuckCompilier:
         n=ord(t)
         return (5*n+4*(n // 16)+3*(n//16//16)+2*(n//16//16//16)+(n//16//16//16//16))%8
 
-    def get_code_block(self,tokens):
-        t = tokens[0]
-        c = self.code_table[self.get_code_for_a_token(t)]
-        if c == self.CODE_BO:
-            pass
-        elif c == self.CODE_BC:
-            pass
-        else:
-            pass
+
+    def get_equivalent_token(self,code,shift,candidate):
+        shift = shift % len(candidate)
+        for cand in candidate[shift:]+candidate:
+            if code == self.get_code_for_a_token(cand):
+                return cand
+        for cand in self.default_tokens:
+            if code == self.get_code_for_a_token(cand):
+                return cand
+
+    def get_equivalent_code_text(self,code_list,candidates,shift_weight):
+        ans=""
+        for shift,code in enumerate(code_list):
+            ans=ans+self.get_equivalent_token(code,shift*shift_weight,candidates)
+        return ans
         
 if __name__ == '__main__':
     bfvm=BrainFuckVM()
