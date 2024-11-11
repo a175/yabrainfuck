@@ -232,6 +232,7 @@ class BrainFuckCompilier:
     def get_modulo_ord(self,c):
         n=ord(c)
         return (5*n+4*(n // 16)+3*(n//16//16)+2*(n//16//16//16)+(n//16//16//16//16))%8
+    
     def get_code_for_tokentext(self, c):
         t=self.get_modulo_ord(c)
         code_table=[('<', self.CODE_PI), ('>', self.CODE_PD), ('+', self.CODE_VI), ('-', self.CODE_VD), ('.', self.CODE_SO), (',', self.CODE_SI), ('[', self.CODE_BO), (']', self.CODE_BC)]
