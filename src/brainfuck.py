@@ -204,18 +204,20 @@ class BrainFuckCompileError(Exception):
 
 class BrainFuckCompilier:    
     def __init__(self,target_brainfuckvm):
-        self.code_table={}
-        for (s,c) in target_brainfuckvm.CODE_TABLE:
-            self.code_table[self.get_token_for_a_char(s)]=c
         self.CODE_BO=target_brainfuckvm.CODE_BO
         self.CODE_BC=target_brainfuckvm.CODE_BC
-        self.default_takens=['.',',','[',']','+','-','<','>']
+        self.CODE_PI=target_brainfuckvm.CODE_PI
+        self.CODE_PD=target_brainfuckvm.CODE_PD        
+        self.CODE_VI=target_brainfuckvm.CODE_VI
+        self.CODE_VD=target_brainfuckvm.CODE_VD
+        self.CODE_SO=target_brainfuckvm.CODE_SO        
+        self.CODE_SI=target_brainfuckvm.CODE_SI       
+        self.default_tokentext=['.',',','[',']','+','-','<','>']        
 
     def get_codelist_from_text(self, codetext):
         r = []
         stack = 0
-        for ti in self.xtokens_from_text(codetext):
-            ci=self.get_code_for_a_token(ti)
+        for ci in self.xcode_from_text(codetext):
             if ci == self.CODE_BO:
                 stack = stack+1
             if ci == self.CODE_BC:
@@ -226,31 +228,35 @@ class BrainFuckCompilier:
         if stack > 0:
             raise BrainFuckCompileError("unpaired [")
         return r
-    
-    def get_token_for_a_char(self, c):
+
+    def get_modulo_ord(self,c):
         n=ord(c)
         return (5*n+4*(n // 16)+3*(n//16//16)+2*(n//16//16//16)+(n//16//16//16//16))%8
+    def get_code_for_tokentext(self, c):
+        t=self.get_modulo_ord(c)
+        code_table=[('<', self.CODE_PI), ('>', self.CODE_PD), ('+', self.CODE_VI), ('-', self.CODE_VD), ('.', self.CODE_SO), (',', self.CODE_SI), ('[', self.CODE_BO), (']', self.CODE_BC)]
+        for (s,c) in code_table:
+            if self.get_modulo_ord(s)==t:
+                return c
 
-    def xtokens_from_text(self, codetext):
+    def xcode_from_text(self, codetext):
         for ti in codetext:
-            yield self.get_token_for_a_char(ti)
+            yield self.get_code_for_tokentext(ti)
 
-    def get_code_for_a_token(self,t):
-        return self.code_table[t]
 
-    def get_equivalent_token(self,code,shift,candidate):
+    def get_equivalent_tokentext(self,code,shift,candidate):
         shift = shift % len(candidate)
         for cand in candidate[shift:]+candidate:
-            if code == self.get_code_for_a_token(self.get_token_for_a_char(cand)):
+            if code == self.get_code_for_tokentext(cand):
                 return cand
-        for cand in self.default_tokens:
-            if code == self.get_code_for_a_token(self.get_token_for_a_char(cand)):
+        for cand in self.default_tokentext:
+            if code == self.get_code_for_tokentext(cand):
                 return cand
 
     def get_equivalent_code_text(self,code_list,candidates,shift_weight):
         ans=""
         for shift,code in enumerate(code_list):
-            ans=ans+self.get_equivalent_token(code,shift*shift_weight,candidates)
+            ans=ans+self.get_equivalent_tokentext(code,shift*shift_weight,candidates)
         return ans
         
 if __name__ == '__main__':
