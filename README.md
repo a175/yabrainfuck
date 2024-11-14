@@ -2,21 +2,21 @@
 Yet another brainfuck implementation
 
 ## 説明
-`BrainFuckVM`はBrainFuckの中間コードを動かす仮想マシンのクラス,
-`BrainFuckCompilier`はテキストで書かれたコードを中間コードにコンパルするコンパイラです.
+`VirtualMachine`はBrainFuckの中間コードを動かす仮想マシンのクラス,
+`Complier`はテキストで書かれたコードを中間コードにコンパルするコンパイラです.
 例えば, いわゆるHelloWordプログラム
 `++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.`
 を走らせるには以下のように行います:
 ```
 import brainfuck
-bfvm= brainfuck.BrainFuckVM()
-bfc = brainfuck.BrainFuckCompilier(bfvm)
+bfvm= brainfuck.VirtualMachine()
+bfc = brainfuck.Complier(bfvm)
 codetorun = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
 codelist = bfc.get_codelist_from_text(codetorun)
 bfvm.set_codelist(codelist)
 bfvm.run()
 ```
-デフォルトのコンパイラ`BrainFuckCompilier`は,
+デフォルトのコンパイラ`Complier`は,
 カッコの釣り合いをチェックし数が合わなければ, `BrainFuckCompileError`を吐きます.
 また,
 文字コードが16進数で0xUVWXYZであるとき,
@@ -43,13 +43,13 @@ bfvm.run()
 𝐀𝛢𝐀𝛢Ą𝛢Ã𝒜Ā𝖠Ã𝐀𝛢𝐀Ā𝖠𝛢ÃΑÃ𝑨Ã𝖠𝛢𝐀𝛢𝖠𝛢 𝜜À𝜜ÅA𝝖𝐀ΑĄΑÅΑÂ𝑨Ā𝜜𝚨 𝙰ĂΑ𝖠𝔄Â𝙰Å𝙰𝔄𝐀𝛢Ą𝛢Ã𝒜Ã𝔄𝔄𝐀𝛢𝐀𝔸𝖠Α𝔄𝜜Å𝔄À𝔄𝛢𝐀𝛢𝔄𝙰Å𝙰Å𝙰Å𝔄ÅǺ𝙰Ǻ𝙰Å𝙰Å𝔄𝝖𝖠𝛢𝔄ΑĄ𝛢𝔄
 ```
 
-これらは, `BrainFuckCompilier` のもつ, 
+これらは, `Complier` のもつ, 
 中間コードをプログラムに変換する`get_equivalent_code_text`を使えば,
 以下のような感じで得られます.
 ```
 import brainfuck
-bfvm = brainfuck.BrainFuckVM()
-bfc = brainfuck.BrainFuckCompilier(bfvm)
+bfvm = brainfuck.VirtualMachine()
+bfc = brainfuck.Complier(bfvm)
 codetorun = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++."
 codelist = bfc.get_codelist_from_text(codetorun)
 candidates = [ chr(i) for i in range(0x16A0,0x16F0+1)]
