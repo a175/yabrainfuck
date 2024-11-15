@@ -267,3 +267,5 @@ if __name__ == '__main__':
     codelist = bfc.get_codelist_from_text(codetorun)
     bfvm.set_codelist(codelist)
     bfvm.run()
+
+
