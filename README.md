@@ -83,3 +83,8 @@ print(translatedcode)
 値を設定します.
 
 
+## BrainFuck方言
+
+例えば,
+https://dic.nicovideo.jp/a/brainfuck%E6%96%B9%E8%A8%80
+に方言がいっぱい載っています.

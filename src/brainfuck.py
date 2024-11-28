@@ -49,7 +49,7 @@ class VirtualMachine:
     CODE_SI=4
     CODE_BO=7
     CODE_BC=1
-    CODE_TABLE=[('<', CODE_PI), ('>', CODE_PD), ('+', CODE_VI), ('-', CODE_VD), ('.', CODE_SO), (',', CODE_SI), ('[', CODE_BO), (']', CODE_BC)]
+    CODE_TABLE=[('>', CODE_PI), ('<', CODE_PD), ('+', CODE_VI), ('-', CODE_VD), ('.', CODE_SO), (',', CODE_SI), ('[', CODE_BO), (']', CODE_BC)]
 
     def __init__(self,output=sys.stdout,input=sys.stdin):
         self.tape=InfiniteTape()
@@ -258,6 +258,76 @@ class Complier:
         ans=""
         for shift,code in enumerate(code_list):
             ans=ans+self.get_equivalent_tokentext(code,shift*shift_weight,candidates)
+        return ans
+
+
+class NyarukoComplier:
+    def __init__(self,target_brainfuckvm):
+        self.CODE_BO=target_brainfuckvm.CODE_BO
+        self.CODE_BC=target_brainfuckvm.CODE_BC
+        self.CODE_PI=target_brainfuckvm.CODE_PI
+        self.CODE_PD=target_brainfuckvm.CODE_PD
+        self.CODE_VI=target_brainfuckvm.CODE_VI
+        self.CODE_VD=target_brainfuckvm.CODE_VD
+        self.CODE_SO=target_brainfuckvm.CODE_SO
+        self.CODE_SI=target_brainfuckvm.CODE_SI
+        self.token_table=[]
+        self.setup_token_table()
+
+    def setup_token_table(self):
+        tokenlist=[
+            (self.CODE_PI,"(」・ω・)」うー(／・ω・)／にゃー"),
+            (self.CODE_PD,"(」・ω・)」うー!!(／・ω・)／にゃー!!"),
+            (self.CODE_VI,"(」・ω・)」うー!(／・ω・)／にゃー!"),
+            (self.CODE_VD,"(」・ω・)」うー!!!(／・ω・)／にゃー!!!"),
+            (self.CODE_SI,"cosmic!"),
+            (self.CODE_SO,"Let's＼(・ω・)／にゃー"),
+            (self.CODE_BO,"CHAOS☆CHAOS!"),
+            (self.CODE_BC,"I WANNA CHAOS!")
+        ]
+        for (c,t) in tokenlist:
+            self.add_to_token_table(c,t)
+    def add_to_token_table(self,code,tokentext):
+        self.token_table.append((code,tokentext))
+    
+    def get_codelist_from_text(self, codetext):
+        r = []
+        stack = 0
+        for ci in self.xcode_from_text(codetext):
+            if ci == self.CODE_BO:
+                stack = stack+1
+            if ci == self.CODE_BC:
+                stack = stack-1
+                if stack < 0:
+                    raise BrainFuckCompileError("unpaired ]")
+            r.append(ci)
+        if stack > 0:
+            raise BrainFuckCompileError("unpaired [")
+        return r
+
+
+    def xcode_from_text(self, codetext):
+        while len(codetext)>0:
+            for (code,t) in self.token_table:
+                if codetext.startswith(t):
+                    yield code
+                    codetext=codetext[len(t):]
+                    break
+            else:
+                codetext=codetext[1:]
+
+
+    def get_equivalent_tokentext(self,code,shift):
+        shift = shift % len(self.token_table)
+        for cand in self.token_table[shift:]+self.token_table:
+            if code == self.get_code_for_tokentext(cand):
+                return cand
+        raise BrainFuckCompileError("NotFoundCorrespondingToken Error")
+
+    def get_equivalent_code_text(self,code_list,shift_weight):
+        ans=""
+        for shift,code in enumerate(code_list):
+            ans=ans+self.get_equivalent_tokentext(code,shift*shift_weight)
         return ans
 
 if __name__ == '__main__':
