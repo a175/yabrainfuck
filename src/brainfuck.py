@@ -385,6 +385,21 @@ class OokComplier(SimpleComplier):
         for (c,t) in tokenlist:
             self.add_to_token_table(c,t)
 
+class BFBASICnComplier(SimpleComplier):
+    def setup_token_table(self):
+        tokenlist=[
+            (self.CODE_PI,"す"),
+            (self.CODE_PD,"ばぼーん"),
+            (self.CODE_VI,"ぽ"),
+            (self.CODE_VD,"び"),
+            (self.CODE_SI,"うすらの"),
+            (self.CODE_SO,"ぽーん"),
+            (self.CODE_BO,"すてらの"),
+            (self.CODE_BC,"なばびこーん")
+        ]
+        for (c,t) in tokenlist:
+            self.add_to_token_table(c,t)
+
 class VariantComplier(SimpleComplier):
     def setup_token_table(self):
         tokenlist=[
