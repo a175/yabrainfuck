@@ -400,6 +400,39 @@ class BFBASICnComplier(SimpleComplier):
         for (c,t) in tokenlist:
             self.add_to_token_table(c,t)
 
+class MisaComplier(SimpleComplier):
+    def setup_token_table(self):
+        tokenlist=[
+            (self.CODE_PI,">"),
+            (self.CODE_PI,"→"),
+            (self.CODE_PI,"～"),
+            (self.CODE_PI,"ー"),
+            (self.CODE_PD,"<"),
+            (self.CODE_PD,"←"),
+            (self.CODE_PD,"★"),
+            (self.CODE_PD,"☆"),
+            (self.CODE_VI,"+"),
+            (self.CODE_VI,"あ"),
+            (self.CODE_VI,"ぁ"),
+            (self.CODE_VI,"お"),
+            (self.CODE_VI,"ぉ"),
+            (self.CODE_VD,"-"),
+            (self.CODE_VD,"っ"),
+            (self.CODE_VD,"ッ"),
+            (self.CODE_SI,","),
+            (self.CODE_SI,"？"),
+            (self.CODE_SO,"."),
+            (self.CODE_SO,"！"),
+            (self.CODE_BO,"["),
+            (self.CODE_BO,"「"),
+            (self.CODE_BO,"『"),
+            (self.CODE_BC,"]"),
+            (self.CODE_BC,"」"),
+            (self.CODE_BC,"』")
+        ]
+        for (c,t) in tokenlist:
+            self.add_to_token_table(c,t)
+
 class VariantComplier(SimpleComplier):
     def setup_token_table(self):
         tokenlist=[
