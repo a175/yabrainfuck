@@ -260,9 +260,8 @@ class Complier:
             ans=ans+self.get_equivalent_tokentext(code,shift*shift_weight,candidates)
         return ans
 
-
-class NyarukoComplier:
-    def __init__(self,target_brainfuckvm):
+class SimpleComplier:
+    def __init__(self,target_brainfuckvm,error_if_unknown_char=False):
         self.CODE_BO=target_brainfuckvm.CODE_BO
         self.CODE_BC=target_brainfuckvm.CODE_BC
         self.CODE_PI=target_brainfuckvm.CODE_PI
@@ -273,20 +272,11 @@ class NyarukoComplier:
         self.CODE_SI=target_brainfuckvm.CODE_SI
         self.token_table=[]
         self.setup_token_table()
+        self.error_if_unknown_char=error_if_unknown_char
 
     def setup_token_table(self):
-        tokenlist=[
-            (self.CODE_PI,"(」・ω・)」うー(／・ω・)／にゃー"),
-            (self.CODE_PD,"(」・ω・)」うー!!(／・ω・)／にゃー!!"),
-            (self.CODE_VI,"(」・ω・)」うー!(／・ω・)／にゃー!"),
-            (self.CODE_VD,"(」・ω・)」うー!!!(／・ω・)／にゃー!!!"),
-            (self.CODE_SI,"cosmic!"),
-            (self.CODE_SO,"Let's＼(・ω・)／にゃー"),
-            (self.CODE_BO,"CHAOS☆CHAOS!"),
-            (self.CODE_BC,"I WANNA CHAOS!")
-        ]
-        for (c,t) in tokenlist:
-            self.add_to_token_table(c,t)
+        pass
+        
     def add_to_token_table(self,code,tokentext):
         self.token_table.append((code,tokentext))
     
@@ -314,6 +304,8 @@ class NyarukoComplier:
                     codetext=codetext[len(t):]
                     break
             else:
+                if self.error_if_unknown_char:
+                    raise BrainFuckCompileError("unknown token")
                 codetext=codetext[1:]
 
 
@@ -329,6 +321,84 @@ class NyarukoComplier:
         for shift,code in enumerate(code_list):
             ans=ans+self.get_equivalent_tokentext(code,shift*shift_weight)
         return ans
+
+class StrictBFComplier(SimpleComplier):
+    def setup_token_table(self):
+        tokenlist=[
+            (self.CODE_PI,">"),
+            (self.CODE_PD,"<"),
+            (self.CODE_VI,"+"),
+            (self.CODE_VD,"-"),
+            (self.CODE_SI,","),
+            (self.CODE_SO,"."),
+            (self.CODE_BO,"["),
+            (self.CODE_BC,"]")
+        ]
+        for (c,t) in tokenlist:
+            self.add_to_token_table(c,t)
+    
+class NyarukoComplier(SimpleComplier):
+    def setup_token_table(self):
+        tokenlist=[
+            (self.CODE_PI,"(」・ω・)」うー(／・ω・)／にゃー"),
+            (self.CODE_PD,"(」・ω・)」うー!!(／・ω・)／にゃー!!"),
+            (self.CODE_VI,"(」・ω・)」うー!(／・ω・)／にゃー!"),
+            (self.CODE_VD,"(」・ω・)」うー!!!(／・ω・)／にゃー!!!"),
+            (self.CODE_SI,"cosmic!"),
+            (self.CODE_SO,"Let's＼(・ω・)／にゃー"),
+            (self.CODE_BO,"CHAOS☆CHAOS!"),
+            (self.CODE_BC,"I WANNA CHAOS!")
+        ]
+        for (c,t) in tokenlist:
+            self.add_to_token_table(c,t)
+
+class KemonoComplier(SimpleComplier):
+    def setup_token_table(self):
+        tokenlist=[
+            (self.CODE_PI,"たのしー！"),
+            (self.CODE_PD,"すごーい！"),
+            (self.CODE_VI,"たーのしー！"),
+            (self.CODE_VD,"すっごーい！"),
+            (self.CODE_SI,"おもしろーい！"),
+            (self.CODE_SO,"なにこれなにこれ！"),
+            (self.CODE_BO,"うわー！"),
+            (self.CODE_BC,"わーい！")
+        ]
+        for (c,t) in tokenlist:
+            self.add_to_token_table(c,t)
+
+class OokComplier(SimpleComplier):
+    def __init__(self,target_brainfuckvm):
+        super().__init__(target_brainfuckvm,error_if_unknown_char=True)
+        
+    def setup_token_table(self):
+        tokenlist=[
+            (self.CODE_PI,"Ook. Ook? "),
+            (self.CODE_PD,"Ook? Ook. "),
+            (self.CODE_VI,"Ook. Ook. "),
+            (self.CODE_VD,"Ook! Ook! "),
+            (self.CODE_SI,"Ook. Ook! "),
+            (self.CODE_SO,"Ook! Ook. "),
+            (self.CODE_BO,"Ook! Ook? "),
+            (self.CODE_BC,"Ook? Ook! ")
+        ]
+        for (c,t) in tokenlist:
+            self.add_to_token_table(c,t)
+
+class VariantComplier(SimpleComplier):
+    def setup_token_table(self):
+        tokenlist=[
+            (self.CODE_PI,""),
+            (self.CODE_PD,""),
+            (self.CODE_VI,""),
+            (self.CODE_VD,""),
+            (self.CODE_SI,""),
+            (self.CODE_SO,""),
+            (self.CODE_BO,""),
+            (self.CODE_BC,"")
+        ]
+        for (c,t) in tokenlist:
+            self.add_to_token_table(c,t)
 
 if __name__ == '__main__':
     bfvm=VirtualMachine()
